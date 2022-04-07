@@ -1,2 +1,2 @@
-# Data analytics: Heart Disease Project
+# Data analytics: Dating apps
 Data Analytics Project'22

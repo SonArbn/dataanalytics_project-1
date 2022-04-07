@@ -21,7 +21,7 @@ What can we learn from user ratings about dating apps?
 
 Dating apps have become more and more important for singles all over the world. In comparison to the services which had come before, Tinder made dating simple, but it also, as studies have found, made it less about lasting connections and relationships and more about casual hook-ups and cheesy openers.
 By 2021 dating app revenues have increased every year since 2015, reaching $5.61 billion with over 323 million people worldwide using dating apps. This project picked four different dating apps to analyze which are somehow different in style and usage.
-Tinder
+### Tinder
 Tinder fundamentally changed online dating by removing the seriousness and giving users more control.
 
 

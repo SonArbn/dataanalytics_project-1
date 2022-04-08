@@ -5,7 +5,7 @@ Project Data Analytics for Psychology and Business
 Questions / to discuss:
 
     How specific has the research question to be?
-    Text Text Text
+   
 
 ## Research question:
 

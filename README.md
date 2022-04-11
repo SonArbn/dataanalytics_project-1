@@ -43,10 +43,10 @@ Hinge may have been destined to be one of the many dating app failures, but the 
 
 The data set contains information of four different dating apps:
 
-Tinder 	>500’000 	 2013 - 2022
+| App      | Cases | Time     |
+| :---        |    :----:   |          ---: |
+| Tinder      | >500’000       | 2013 - 2022   |
+| Bumble   | >104’000        | 2015 - 2022      |
+| OkCupid      | >127’000       | 2010 - 2022   |
+| Hinge   | >53’000        | 2017 - 2022      |
 
-Bumble 	>104’000 	 2015 - 2022
-
-OkCupid >127’000   2010 - 2022
-
-Hinge 	>53’000 	 2017 - 2022

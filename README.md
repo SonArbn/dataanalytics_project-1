@@ -9,7 +9,7 @@ Questions / to discuss:
 
 ## Research question:
 
-What can we learn from user ratings about dating apps?
+What are the reasons for good and bad ratings in dating apps? 
 
     - How are the different apps rated over the years?
     - Which app has more favorable responses?

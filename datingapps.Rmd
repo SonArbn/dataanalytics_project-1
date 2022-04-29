@@ -7,36 +7,40 @@ output: html_notebook
 library(tidytext)
 library(tidyverse)
 library(tibble)
+library(wordcloud)
+library(RColorBrewer)
+library(tibble)
 ```
 
 Loading the datasets, organizing columns and merging into one data set: 
 ```{r}
-tinder <- data.frame()
 tinder <- read.csv(file = "tinder.csv")
-okcupid <- data.frame()
+
 okcupid <- read.csv(file = "okcupid.csv")
-bumble <- data.frame()
+
 bumble <- read.csv(file = "bumble.csv")
-hinge <- data.frame()
+
 hinge <- read.csv(file = "hinge.csv")
   
-filter_col <- function(mydata){
-  mydata %>% select (userName, content, score,reviewCreatedVersion, at, replyContent)
+filter_data <- function(mydata){
+  mydata <- select(mydata, userName, content, score, thumbsUpCount,reviewCreatedVersion, at, replyContent)
+  mydata <- filter(mydata, mydata$at > as.POSIXct("2020-01-01 00:00:00", tz="UTC")) 
+  filter(mydata, thumbsUpCount != 0 )
   }
 
-tinder <- filter_col(tinder)
+tinder <- filter_data(tinder)
 appName <- rep(c("Tinder"))
 tinder <- cbind(tinder, appName)
 
-okcupid <- filter_col(okcupid)
+okcupid <- filter_data(okcupid)
 appName <- rep(c("okcupid"))
 okcupid <- cbind(okcupid, appName)
 
-bumble <- filter_col(bumble)
+bumble <- filter_data(bumble)
 appName <- rep(c("bumble"))
 bumble <- cbind(bumble, appName)
 
-hinge <- filter_col(hinge)
+hinge <- filter_data(hinge)
 appName <- rep(c("hinge"))
 hinge <- cbind(hinge, appName)
 
@@ -44,19 +48,95 @@ all_reviews <- rbind(tinder,okcupid,bumble,hinge)
 ```
 Calculating mean score for each app:
 ```{r}
-
 t_meanscore <- mean(tinder$score)
 ok_meanscore <- mean(okcupid$score)
 b_meanscore <- mean(bumble$score)
 h_meanscore <- mean(hinge$score)
 ```
-Creating a subset from the last 2 years:
+Creating subsets for each score:
 ```{r}
-tinder_time <- filter(tinder[tinder$at > as.POSIXct("2020-01-01 00:00:00", tz="UTC"),])
-ok_time <- filter(okcupid[okcupid$at > as.POSIXct("2020-01-01 00:00:00", tz="UTC"),])
-b_time <- filter(bumble[bumble$at > as.POSIXct("2020-01-01 00:00:00", tz="UTC"),])
-h_time <- filter(hinge[hinge$at > as.POSIXct("2020-01-01 00:00:00", tz="UTC"),])
+score_1 <- filter(all_reviews, score == 1 )
+score_2 <- filter(all_reviews, score == 2 )
+score_3 <- filter(all_reviews, score == 3 )
+score_4 <- filter(all_reviews, score == 4 )
+score_5 <- filter(all_reviews, score == 5 )
 
-all_subset <- rbind(tinder_time,ok_time,b_time,h_time)
-saveRDS(all_subset, file = "cleaned_data.rds")
+```
+```{r}
+text_1 <- score_1 %>% select(content)
+text_1 <- text_1 %>% rename(text = content) 
+```
+with the help of `mutate()` function, we annotate the data by `linenumber` to keep track of lines:
+```{r}
+annotatedData <- text_1  %>%  
+                mutate(linenumber = row_number())
+```
+we tokenize the texts to restructure the data into _one-token-per-row_ format, for which we first ungroup the `annotatedData` and pass it to the `unnest_tokens()` function, as shown below:
+```{r} 
+organized_text <- annotatedData %>% ungroup
+tidy_text <- organized_text %>% unnest_tokens(bigram, text, token = "ngrams", n = 2)
+tidy_text <- tidy_text %>% count(bigram, sort = TRUE)
+bigrams_separated <- tidy_text %>% separate(bigram, c("word1", "word2"), sep = " ")
+```
+Filter out those rows in which either `word1` or `word2` is a stop word:
+```{r}
+bigram_filtered <- bigrams_separated %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word)
+```
+Removing the stop words of SMART lexicon: 
+```{r}
+bigram_cleaned <- bigram_filtered %>% anti_join(get_stopwords(source="smart"))
+```
+Sorting the tokens and have a look at the most frequently used words in our text corpus:
+```{r}
+distribution_words <- bigram_filtered %>% count(word, sort = TRUE)
+bigrams <- bigram_filtered %>% 
+            unite(bigram, word1, word2, sep=" ")
+bigrams %>% count(bigram, sort=TRUE)
+```
+Creating custom stopwords:
+```{r}
+stop_words <- c("dating app","dating apps","worst app")
+bigrams <- anti_join(get_stopwords(source="smart"), stop_words)
+```
+Visualizing them as a bar chart:
+```{r}
+tokenized_counts = bigrams %>% 
+  count(word) %>% 
+  filter(n > 100) # eliminate infrequent words
+
+# iterate through words and calc correlations
+
+correlations = numeric(nrow(bigrams))
+names(correlations) = bigrams$bigram
+for(i in 1:nrow(bigrams)){
+  print(i)
+  bigram_i = bigrams %>% slice(i) %>% pull(bigram)
+  bigram_present = str_detect(bigrams, bigram_i)
+  correlations[i] = cor(bigram_present, score_1$score)  
+  }
+```
+Visualizing:
+```{r}
+bigram_plot <- bigrams %>%
+  filter(n > 172 ) %>%   # only bigrams with frequency > 172
+  mutate(word = reorder(bigram, n)) %>%
+  ggplot(aes(bigram, n)) +
+  geom_col() +
+  coord_flip() +
+  geom_col(show.legend = FALSE, fill="orange") +
+  labs(y= "Most popular bigrams from worst reviews (1 score)")
+bigram_plot
+
+bigrams %>% bigrams$filter(str_contains('app', bigram))
+
+```
+Creating a colorful wordcloud:
+```{r}
+pal <- brewer.pal(8,"Dark2")
+
+wordcloud(bigrams$n, max.words= 40, random.order = FALSE, colors=pal)
+```
+```{r}
+saveRDS(result, file = "cleaned_data.rds")
 ```

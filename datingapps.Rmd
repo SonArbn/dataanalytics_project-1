@@ -3,6 +3,54 @@ title: "Dating apps"
 output: html_notebook
 ---
 
+Average score over time:
+```{r}
+library(tidyverse)
+library(fpp3)
+library(ggplot2)
+
+#timeseries (create a subset so I can produce plots)
+
+timeseries <-  dating %>% mutate(Month = yearmonth(Date)) %>% select(score, Month, Group) %>% group_by(Month)
+
+
+# average score per month all apps
+
+timeseries2 <- timeseries %>% summarize(average_score = mean(score)) %>% group_by(Month)
+timeseries2 %>% ggplot(mapping = aes(x=Month, y=average_score)) + geom_line() + labs(titel = "Average score from 2010 to 2022 of dating Apps", x = "Time (Month)", y = "Average Score")
+
+#Amount of reviews per year
+timeseries2.0 <- dating %>% mutate(Year = year(Date)) %>% select(score, Year, Group, content) %>% group_by(Year)
+
+#Here I had to find out how many reviews were done in a year
+T2010 <- timeseries2.0 %>% filter(Year == 2010)
+T2011 <- timeseries2.0 %>% filter(Year == 2011)
+T2012 <- timeseries2.0 %>% filter(Year == 2012)
+T2013 <- timeseries2.0 %>% filter(Year == 2013)
+T2014 <- timeseries2.0 %>% filter(Year == 2014)
+T2015 <- timeseries2.0 %>% filter(Year == 2015)
+T2016 <- timeseries2.0 %>% filter(Year == 2016)
+T2017 <- timeseries2.0 %>% filter(Year == 2017)
+T2018 <- timeseries2.0 %>% filter(Year == 2018)
+T2019 <- timeseries2.0 %>% filter(Year == 2019)
+T2020 <- timeseries2.0 %>% filter(Year == 2020)
+T2021 <- timeseries2.0 %>% filter(Year == 2021)
+T2022 <- timeseries2.0 %>% filter(Year == 2022)
+
+#then I created a data frame with each year and the amount of reviews every year
+
+df1 <- data.frame(Year = c('2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022'), 
+                  Reviews = c(337,2292,6773,16734,51999,69656,78941,84124,95923,151928,124497,106499,28012))
+
+#finally I made a plot
+df1 %>% ggplot(mapping = aes(x=Year, y=Reviews)) + geom_col() + labs(titel = "Number of Reviews per Year", x = "Year", y = "Amount of Reviews")
+
+
+```
+We produced two plots in advance. The first one shows that users scored the dating apps worse in the last years than in the beginning. A crucial point happended in 2020 when a clear downwards trend is seen.
+The second plot shows that the amount of reviews given over time increased. So more people comment and more negative scores are given. 
+
+
 ```{r}
 library(tidytext)
 library(tidyverse)

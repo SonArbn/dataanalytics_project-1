@@ -6,7 +6,7 @@ Project Data Analytics for Psychology and Business
 ## Research question:
 
 What are the reasons for good and bad ratings in dating apps? 
-
+j
     - How are the different apps rated over the years?
     - Which app has more favorable responses?
     - Have those favorable responses stayed consistent through the years or have they increased/decreased?
@@ -42,14 +42,5 @@ Hinge may have been destined to be one of the many dating app failures, but the 
 
 **The goal** of this project is to analyze how the user view has developed over the last two years.Therefore an analysis of the rating, the user comments and the Number of Thumbs up received by a person will be made. Furthermore wordclowds will show what polarized the reviews given by the user. We hope that this project will help app developers or investors who want to improve their dating app or pick out the next big dating app.
 
-## Data
 
-The data set contains information of four different dating apps:
-
-| App      | Cases | Time     |
-| :---        |    :----:   |          ---: |
-| Tinder      | >500’000       | 2013 - 2022   |
-| Bumble   | >104’000        | 2015 - 2022      |
-| OkCupid      | >127’000       | 2010 - 2022   |
-| Hinge   | >53’000        | 2017 - 2022      |
 

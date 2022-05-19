@@ -1,4 +1,4 @@
-# Data analytics project: Dating apps reviews analysis using R
+#  Dating apps reviews analysis using R
 
 In this Project we analysed the reviews of 4 most popular dating apps: Tinder, OkCupid, Bumble and Hinge. The reviews are scrapped from the Google Play Store and therefore covering only Android users. The data source is https://www.kaggle.com/. We analysed the reviews from the last 2 years (January 2020 to March 2022) since we are interested in discovering the most recent trends. We hope that our findings will help app developers and marketing teams to improve their products and to increase overall customer satisfaction.
 
